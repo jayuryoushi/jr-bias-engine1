@@ -5,6 +5,8 @@ import urllib.parse
 import json
 import os
 import re
+import sys
+import traceback
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
  
@@ -12,7 +14,7 @@ from datetime import datetime, timezone
 API_KEY  = os.environ.get("NVIDIA_API_KEY", "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")
 ENDPOINT = "https://integrate.api.nvidia.com/v1/chat/completions"
 MODEL    = "nvidia/llama-3.3-nemotron-super-49b-v1"
-PORT     = int(os.environ.get("PORT", 8765))
+PORT     = int(os.environ.get("PORT", 8080))
 HOST     = "0.0.0.0"
  
 # ── RSS feeds ─────────────────────────────────────────────────────
@@ -462,9 +464,19 @@ if __name__ == "__main__":
     print()
     print("  Ctrl+C to stop.")
     print()
- 
+    sys.stdout.flush()
+
+    print(f"  Binding HTTPServer to {HOST}:{PORT} ...")
+    sys.stdout.flush()
     server = http.server.HTTPServer((HOST, PORT), ProxyHandler)
+    print(f"  Server started — listening on {HOST}:{PORT}")
+    sys.stdout.flush()
+
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         print("\n  Server stopped.")
+    except Exception as e:
+        print(f"\n  [FATAL] serve_forever() raised an exception: {e}", flush=True)
+        traceback.print_exc()
+        sys.exit(1)
