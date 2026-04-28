@@ -1,3 +1,5 @@
+print("[BOOT] proxy.py execution started — top of file reached", flush=True)
+
 import http.server
 import urllib.request
 import urllib.error
@@ -9,6 +11,8 @@ import sys
 import traceback
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
+
+print("[BOOT] All standard-library imports succeeded", flush=True)
  
 # ── Config ────────────────────────────────────────────────────────
 API_KEY  = os.environ.get("NVIDIA_API_KEY", "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")
@@ -86,6 +90,8 @@ FRED_SERIES = {
     "Credit Spread HY":      "BAMLH0A0HYM2",
 }
 FRED_API_KEY = os.environ.get("FRED_API_KEY", "e08c51195328cf35b05ae8d0f777f091")  # Optional — get free key at fred.stlouisfed.org
+
+print("[BOOT] Module-level config and constants initialised", flush=True)
  
  
 def fetch_deitaone():
@@ -449,34 +455,41 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
  
  
 if __name__ == "__main__":
-    print()
-    print("=" * 60)
-    print("   Trading Bias Dashboard — Nemotron Super 49B + FRED + RSS")
-    print("=" * 60)
-    print()
-    print(f"  Model     : {MODEL}")
-    print(f"  Instrument: US100 CFD (NAS100)")
-    print(f"  Sources   : FRED, Reuters, CNBC, MarketWatch, FT, Investing.com")
-    print(f"  Endpoints : / (dashboard)  /news (live ticker)  /v1/messages (AI)")
-    print(f"  Host      : {HOST}:{PORT}")
-    print()
-    print(f"  Open Brave -> http://localhost:{PORT}")
-    print()
-    print("  Ctrl+C to stop.")
-    print()
-    sys.stdout.flush()
-
-    print(f"  Binding HTTPServer to {HOST}:{PORT} ...")
-    sys.stdout.flush()
-    server = http.server.HTTPServer((HOST, PORT), ProxyHandler)
-    print(f"  Server started — listening on {HOST}:{PORT}")
-    sys.stdout.flush()
-
     try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        print("\n  Server stopped.")
-    except Exception as e:
-        print(f"\n  [FATAL] serve_forever() raised an exception: {e}", flush=True)
+        print("[BOOT] __main__ block entered", flush=True)
+        print()
+        print("=" * 60)
+        print("   Trading Bias Dashboard — Nemotron Super 49B + FRED + RSS")
+        print("=" * 60)
+        print()
+        print(f"  Model     : {MODEL}")
+        print(f"  Instrument: US100 CFD (NAS100)")
+        print(f"  Sources   : FRED, Reuters, CNBC, MarketWatch, FT, Investing.com")
+        print(f"  Endpoints : / (dashboard)  /news (live ticker)  /v1/messages (AI)")
+        print(f"  Host      : {HOST}:{PORT}")
+        print()
+        print(f"  Open Brave -> http://localhost:{PORT}")
+        print()
+        print("  Ctrl+C to stop.")
+        print()
+        sys.stdout.flush()
+
+        print(f"  Binding HTTPServer to {HOST}:{PORT} ...")
+        sys.stdout.flush()
+        server = http.server.HTTPServer((HOST, PORT), ProxyHandler)
+        print(f"  Server started — listening on {HOST}:{PORT}")
+        sys.stdout.flush()
+
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            print("\n  Server stopped.")
+        except Exception as e:
+            print(f"\n  [FATAL] serve_forever() raised an exception: {e}", flush=True)
+            traceback.print_exc()
+            sys.exit(1)
+
+    except Exception as _boot_exc:
+        print(f"\n[FATAL] Crash during startup: {type(_boot_exc).__name__}: {_boot_exc}", flush=True)
         traceback.print_exc()
         sys.exit(1)
